@@ -38,6 +38,10 @@ class VideoService:
         )
 
         # 使用 gevent 异步执行 ffmpeg 提取音频和封面
+        #
+        # 说明：为什么 monkey.patch_all 之后，还需要 gevent.spawn？
+        # 虽然 monkey.patch_all() 使得标准库的 I/O 操作变得非阻塞，但它并不会自动创建新的协程来执行任务
+        # 你仍然需要使用 gevent.spawn() 来显式地创建和启动新的协程，以便在需要并发执行任务时能够进行有效的任务调度和切换
         audio_operation = spawn(
             VideoProcessor.extract_audio, input_file_path, audio_file_path
         )
